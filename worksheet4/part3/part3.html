@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="../../angelCommon/initShaders.js"></script>
+        <script type="text/javascript" src="../../angelCommon/MV.js"></script>
+        <script type="text/javascript" src="../../angelCommon/webgl-utils.js"></script>
+        <script type="text/javascript" src="part3.js"></script>
+        <script id ="vertex-shader" type="x-shader/x-vertex">
+            attribute vec4 a_Position;
+            attribute vec4 a_Normal;
+            uniform mat4 modelView;
+            uniform mat4 projection;
+            uniform vec4 lightPos;
+            uniform vec4 lightIntensity;
+            varying vec4 fColor;
+            void main() {
+                gl_Position = projection * modelView * a_Position;
+                vec3 norm = normalize((modelView * a_Normal)).xyz;
+                vec3 wi = lightPos.w == 0.0 ? normalize(-lightPos.xyz) : normalize(lightPos.xyz - gl_Position.xyz);
+                vec4 lo = lightIntensity * max(dot(norm, wi), 0.0);
+                lo.a = 1.0;
+                fColor = 0.5 * a_Position + 0.5 * lo;
+            }
+        </script>
+        <script id="fragment-shader"type="x-shader/x-fragment">
+            precision mediump float;
+            varying vec4 fColor;
+            void main() {
+                gl_FragColor = fColor;
+            }
+        </script>
+    </head>
+    <body>
+        <canvas id="c" height="512" width="512">
+            HTML5 canvas not supported. 
+        </canvas>
+        <br/>
+        <button id="increment">Increment</button>
+        <button id="decrement">Decrement</button>
+        <button id="orbit">Toggle orbit</button>
+    </body>
+</html>

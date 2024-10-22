@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="../../angelCommon/initShaders.js"></script>
+        <script type="text/javascript" src="../../angelCommon/MV.js"></script>
+        <script type="text/javascript" src="../../angelCommon/webgl-utils.js"></script>
+        <script type="text/javascript" src="part4.js"></script>
+        <script id ="vertex-shader" type="x-shader/x-vertex">
+            attribute vec4 a_Position;
+            attribute vec4 a_Normal;
+            uniform mat4 modelView;
+            uniform mat4 projection;
+            uniform vec4 lightPos;
+            uniform vec4 lightIntensity;
+            uniform float le;
+            uniform vec4 la;
+            uniform vec4 kd;
+            uniform vec4 ks;
+            uniform float s;
+            varying vec4 vColor;
+            void main() {
+                gl_Position = projection * modelView * a_Position;
+                vec4 clightPos = modelView * lightPos;
+                vec3 norm = normalize((modelView * a_Normal)).xyz;
+                vec3 wi = clightPos.w == 0.0 ? normalize(-clightPos.xyz) : normalize(clightPos.xyz - gl_Position.xyz);
+                vec3 wo = normalize(-gl_Position).xyz;
+                vec3 wr = normalize(2.0 * dot(wi, norm) * norm - wi);
+                vec3 wh = normalize(wi + wo);
+                vec4 lrd = kd * le * lightIntensity * max(dot(norm, wi), 0.0);
+                vec4 lrs = ks * lightIntensity * pow(max(dot(wh, norm), 0.0), s);
+                vec4 lra = kd * la;
+                vec4 lo = lrd + lrs + lra;
+                lo.a = 1.0;
+                vColor = 0.5 * a_Position + 0.5 * lo;
+            }
+        </script>
+        <script id="fragment-shader"type="x-shader/x-fragment">
+            precision mediump float;
+            varying vec4 vColor;
+            void main() {
+                gl_FragColor = vColor;
+            }
+        </script>
+    </head>
+    <body>
+        <canvas id="c" height="512" width="512">
+            HTML5 canvas not supported. 
+        </canvas>
+        <br/>
+        <button id="increment">Increment</button>
+        <button id="decrement">Decrement</button>
+        <button id="orbit">Toggle orbit</button>
+        <br/>
+        <span>
+            <label>Emitted radiance (L_e)</label>
+            &emsp;
+            <label>0</label>
+            <input id="le" type="range" min="0" max="2" value="1" step="0.1"/>
+            <label>2</label>
+        </span>
+        <br/>
+        <span>
+            <label>Light ambience (L_a)</label>
+            &emsp;
+            <label>0</label>
+            <input id="la" type="range" min="0" max="1" value="0.5" step="0.1"/>
+            <label>1</label>
+        </span>
+        <br/>
+        <span></span>
+            <label>Diffuse coefficient (K_d)</label>
+            &emsp;
+            <label>0</label>
+            <input id="kd" type="range" min="0" max="1" value="0.5" step="0.1"/>
+            <label>1</label>
+        </span>
+        <br/>
+        <span>
+            <label>Specular coefficient (K_s)</label>
+            &emsp;
+            <label>0</label>
+            <input id="ks" type="range" min="0" max="1" value="0.5" step="0.1"/>
+            <label>1</label>
+        </span>
+        <br/>
+        <span>
+            <label>Shininess (s)</label>
+            &emsp;
+            <label>0</label>
+            <input id="s" type="range" min="0" max="1000" value="500" step="5"/>
+            <label>1000</label>
+        </span>
+    </body>
+</html>

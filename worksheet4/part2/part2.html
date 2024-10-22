@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="../../angelCommon/initShaders.js"></script>
+        <script type="text/javascript" src="../../angelCommon/MV.js"></script>
+        <script type="text/javascript" src="../../angelCommon/webgl-utils.js"></script>
+        <script type="text/javascript" src="part2.js"></script>
+        <script id ="vertex-shader" type="x-shader/x-vertex">
+            attribute vec4 a_Position;
+            uniform mat4 model;
+            uniform mat4 view;
+            uniform mat4 projection;
+            varying vec4 cPosition;
+            void main() {
+                gl_Position = projection * view * model * a_Position;
+                cPosition = a_Position;
+            }
+        </script>
+        <script id="fragment-shader"type="x-shader/x-fragment">
+            precision mediump float;
+            varying vec4 cPosition;
+            void main() {
+                gl_FragColor = 0.5 * cPosition + 0.5;
+            }
+        </script>
+    </head>
+    <body>
+        <canvas id="c" height="512" width="512">
+            HTML5 canvas not supported. 
+        </canvas>
+        <br/>
+        <button id="increment">Increment</button>
+        <button id="decrement">Decrement</button>
+    </body>
+</html>

@@ -1,0 +1,43 @@
+a. Phong lighting is the lighting model that describes how light interacts
+with a surface at a specific point, and can be used with other shading methods
+like Gouraud shading to interpolate the colours. Phong shading is the shading
+technique that applies the lighting model on every pixel of the object. 
+
+b. Flat shading calculates the lighting for each surface using only a single normal,
+so the color is uniform across the surface and there is no interpolation. Gouraud
+shading calculates the lighting for each vertex of the surface and then interpolating
+it across the surface to make it appear smooth. Phong shading calculates the lighting
+for each pixel by interpolating surface normals across the surface. 
+
+Flat shading:
+Pros: Fast and easy to compute and works well for flat surfaces
+Cons: Low realism, no smooth shading and realistic highlights
+
+Gouraud shading:
+Pros: Smooth shading and still relatively efficient compared to Phong shading
+Cons: Things like specular highlights may not be rendered properly, and it can
+fail to capture subtle lighting details on surfaces
+
+Phong shading:
+Pros: Most accurate and smooth shading, and accurate highlights
+Cons: Slower and computationally more expensive due to calculation at every pixel
+
+Phong shading is best for simulating highlights, as highlights are more accurate due 
+to calculation at every pixel compared to calculation at every vertex for Gouraud
+shading or calculation at every surface for flat shading. 
+
+c. A directional light is treated as a light source infinitely far away that emits light
+in 1 direction only, with parallel light rays hitting the object and same light intensity
+on the object. A point light has a specific position in space and emits light in all
+directions, with intensity of light decreasing as object moves further from light.
+
+d. Eye position will influence the shading of an object, as the specular reflection
+component in the Phong reflection model is dependent on the angle between direction of
+perfect reflection and the direction of the observer. 
+
+e. The object will no longer have specular highlights, and it will not have a glossy appearance. 
+
+f. Increasing shininess component will cause specular reflection to be more concentrated and brighter, 
+so the specular highlights will be smaller but more intense.
+
+g. Eye space. 

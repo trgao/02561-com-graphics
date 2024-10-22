@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="../../angelCommon/initShaders.js"></script>
+        <script type="text/javascript" src="../../angelCommon/MV.js"></script>
+        <script type="text/javascript" src="../../angelCommon/webgl-utils.js"></script>
+        <script type="text/javascript" src="part2.js"></script>
+        <script id ="vertex-shader" type="x-shader/x-vertex">
+            attribute vec4 a_Position;
+            attribute vec2 vTexCoord;
+            uniform mat4 model;
+            uniform mat4 view;
+            uniform mat4 projection;
+            varying vec2 fTexCoord;
+            void main() {
+                gl_Position = projection * view * model * a_Position;
+                fTexCoord = vTexCoord;
+            }
+        </script>
+        <script id="fragment-shader"type="x-shader/x-fragment">
+            precision mediump float;
+            varying vec2 fTexCoord;
+            uniform sampler2D texMap;
+            void main() {
+                gl_FragColor = texture2D(texMap, fTexCoord);;
+            }
+        </script>
+    </head>
+    <body>
+        <canvas id="c" height="512" width="512">
+            HTML5 canvas not supported. 
+        </canvas>
+        <br/>
+        <h4>Texture wrapping</h4>
+        <button id="repeat">Repeat</button>
+        <button id="clamp-to-edge">Clamp-to-edge</button>
+        <br/>
+        <h4>Magnification</h4>
+        <button id="nearest-mag">Nearest</button>
+        <button id="linear-mag">Linear</button>
+        <br/>
+        <h4>Minification</h4>
+        <button id="nearest-min">Nearest</button>
+        <button id="linear-min">Linear</button>
+        <button id="nearest-mipmap-nearest">Nearest Mipmap nearest</button>
+        <button id="linear-mipmap-nearest">Linear Mipmap nearest</button>
+        <button id="nearest-mipmap-linear">Nearest Mipmap linear</button>
+        <button id="linear-mipmap-linear">Linear mipmap linear</button>
+    </body>
+</html>

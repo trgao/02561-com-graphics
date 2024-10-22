@@ -1,0 +1,4 @@
+Surface normals are obtained from parsing the OBJ file.
+By interpolating the surface normal for every point on the surface, the shading
+obtained when rendering a triangle mesh becomes smooth and is not block by block
+like flat shading. 

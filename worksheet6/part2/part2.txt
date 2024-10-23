@@ -1,0 +1,12 @@
+Nearest: blocky and pixelated look of textures as there is no interpolation
+does not do much to help with magnification/minification issues
+Linear: Smoother texture appearance when magnified due to interpolation,
+might still look blocky for minification as values are averaged
+Nearest mipmap nearest: Abrupt transitions between different mipmap levels
+as there is no interpolation between mipmap levels
+Linear mipmap nearest: Smooth texture within a mipmap level, but abrupt transitions
+between different mipmap levels as there is no interpolation between mipmap levels
+Nearest mipmap linear: Smooth transition between different mipmap levels but no within
+a mipmap level
+Linear mipmap linear: Smooth transitions between different mipmap levels and
+within mipmap levels

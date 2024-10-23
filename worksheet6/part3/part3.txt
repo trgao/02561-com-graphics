@@ -1,0 +1,4 @@
+Linear mipmap linear is chosen for the trilinear filtering, that ensures
+smooth transition between mipmap levels to reduce visual artifacts, like harsh
+changes in texture quality during spinning, and smooth transition within mipmap
+levels, reducing the aliasing problem when spinning the globe

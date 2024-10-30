@@ -23,22 +23,6 @@ window.onload = function init() {
     var vc = vec4(-0.816497, -0.471405, -0.333333, 1.0);
     var vd = vec4(0.816497, -0.471405, -0.333333, 1.0);
 
-    var lightPos = vec4(0.0, 0.0, -1.0, 0.0);
-    var lightIntensity = vec4(1.0, 1.0, 1.0, 1.0);
-    var le = 0.0;
-    var la = vec4(0.5, 0.5, 0.5, 1.0);
-    var kd = vec4(0.5, 0.5, 0.5, 1.0);
-    var ks = vec4(0.5, 0.5, 0.5, 1.0);
-    var s = 500.0;
-
-    gl.uniform4fv(gl.getUniformLocation(program, "lightPos"), flatten(lightPos));
-    gl.uniform4fv(gl.getUniformLocation(program, "lightIntensity"), flatten(lightIntensity));
-    gl.uniform1f(gl.getUniformLocation(program, "le"), le);
-    gl.uniform4fv(gl.getUniformLocation(program, "la"), flatten(la));
-    gl.uniform4fv(gl.getUniformLocation(program, "kd"), flatten(kd));
-    gl.uniform4fv(gl.getUniformLocation(program, "ks"), flatten(ks));
-    gl.uniform1f(gl.getUniformLocation(program, "s"), s);
-
     var pointsArray = [];
     var normalsArray = [];
     var theta = 0;
@@ -85,7 +69,7 @@ window.onload = function init() {
         gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-        for(var i = 0; i < 6; ++i) {
+        for (var i = 0; i < 6; ++i) {
             var image = document.createElement('img');
             image.crossorigin = 'anonymous';
             image.textarget = gl.TEXTURE_CUBE_MAP_POSITIVE_X + i;

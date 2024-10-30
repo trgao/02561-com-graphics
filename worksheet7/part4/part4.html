@@ -4,32 +4,52 @@
         <script type="text/javascript" src="../../angelCommon/initShaders.js"></script>
         <script type="text/javascript" src="../../angelCommon/MV.js"></script>
         <script type="text/javascript" src="../../angelCommon/webgl-utils.js"></script>
-        <script type="text/javascript" src="part3.js"></script>
+        <script type="text/javascript" src="part4.js"></script>
         <script id ="vertex-shader" type="x-shader/x-vertex">
             attribute vec4 a_Position;
             attribute vec4 a_Normal;
             uniform mat4 modelView;
             uniform mat4 projection;
             uniform mat4 texMatrix;
+            varying vec4 vPosition;
             varying vec4 vNormal;
             varying vec4 texCoords;
             void main() {
                 texCoords = texMatrix * a_Position;
                 gl_Position = projection * modelView * a_Position;
+                vPosition = a_Position;
                 vNormal = a_Normal;
             }
         </script>
         <script id="fragment-shader"type="x-shader/x-fragment">
             precision mediump float;
+            varying vec4 vPosition;
+            varying vec4 vNormal;
             varying vec4 texCoords;
+            uniform sampler2D normalMap;
             uniform samplerCube texMap;
             uniform vec3 eyePos;
             uniform bool reflective;
+
+            vec3 rotate_to_normal(vec3 n, vec3 v) {
+                float sgn_nz = sign(n.z + 1.0e-12);
+                float a = -1.0/(1.0 + abs(n.z));
+                float b = n.x*n.y*a;
+                return vec3(1.0 + n.x*n.x*a, b, -sgn_nz*n.x)*v.x
+                + vec3(sgn_nz*b, sgn_nz*(1.0 + n.y*n.y*a), -n.y)*v.y
+                + n*v.z;
+            }
+            
             void main() {
+                float pi = 3.14159265359;
+                float u = 1.0 - atan(vPosition.z, vPosition.x) / (2.0 * pi);
+                float v = acos(vPosition.y) / pi;
+                vec2 fTexCoord = vec2(u, v);
                 vec3 newCoords = texCoords.xyz;
                 if (reflective) {
-                    vec3 iw = (newCoords - eyePos) / length(newCoords - eyePos);
-                    newCoords = reflect(iw, newCoords);
+                    vec3 c = texture2D(normalMap, fTexCoord).xyz;
+                    vec3 nbump = rotate_to_normal(vNormal.xyz, 2.0 * c - 1.0);
+                    newCoords = reflect(vPosition.xyz - eyePos, nbump);
                 }
                 gl_FragColor = textureCube(texMap, newCoords);
             }

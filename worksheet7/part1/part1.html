@@ -10,43 +10,18 @@
             attribute vec4 a_Normal;
             uniform mat4 modelView;
             uniform mat4 projection;
-            varying vec4 vPosition;
             varying vec4 vNormal;
             void main() {
                 gl_Position = projection * modelView * a_Position;
-                vPosition = a_Position;
                 vNormal = a_Normal;
             }
         </script>
         <script id="fragment-shader"type="x-shader/x-fragment">
             precision mediump float;
-            uniform highp mat4 modelView;
-            uniform highp mat4 projection;
-            uniform vec4 lightIntensity;
-            uniform vec4 lightPos;
-            uniform float le;
-            uniform vec4 ks;
-            uniform float s;
-            varying vec4 vPosition;
             varying vec4 vNormal;
             uniform samplerCube texMap;
             void main() {
-                vec4 fColor = textureCube(texMap, vNormal.xyz);
-                vec4 kd = fColor;
-                vec4 la = fColor;
-                vec4 pos = projection * modelView * vPosition;
-                vec4 clightPos = modelView * lightPos;
-                vec3 norm = normalize((modelView * vNormal)).xyz;
-                vec3 wi = clightPos.w == 0.0 ? normalize(-clightPos.xyz) : normalize(clightPos.xyz - pos.xyz);
-                vec3 wo = normalize(-pos).xyz;
-                vec3 wr = normalize(2.0 * dot(wi, norm) * norm - wi);
-                vec3 wh = normalize(wi + wo);
-                vec4 lrd = kd * le * lightIntensity * max(dot(norm, wi), 0.0);
-                vec4 lrs = ks * lightIntensity * pow(max(dot(wh, norm), 0.0), s);
-                vec4 lra = kd * la;
-                vec4 lo = lrd + lrs + lra;
-                lo.a = 1.0;
-                gl_FragColor = lo * fColor;
+                gl_FragColor = textureCube(texMap, vNormal.xyz);
             }
         </script>
     </head>

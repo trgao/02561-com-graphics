@@ -34,7 +34,7 @@
                 float pi = 3.14159265359;
                 float u = 1.0 - atan(vNormal.z, vNormal.x) / (2.0 * pi);
                 float v = acos(vNormal.y) / pi;
-                vec2 fTexCoord = vec2(u,v);
+                vec2 fTexCoord = vec2(u, v);
                 vec4 fColor = texture2D(texMap, fTexCoord);
                 vec4 kd = fColor;
                 vec4 la = fColor;

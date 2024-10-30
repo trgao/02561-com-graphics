@@ -1,0 +1,7 @@
+The vertices of the background quad are given in clip coordinates,
+which are coordinates in space after applying model-view-projection
+matrix transformation to coordinates. Hence, we just need to undo the
+model-view-projection matrix transformation to get the original coordinates
+of the quad so that we can render.
+Hence we just need to inverse the model-view-projection matrix,
+inverse(projection * modelView) = inverse(modelView) * inverse(projection)

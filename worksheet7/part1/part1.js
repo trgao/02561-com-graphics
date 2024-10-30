@@ -57,33 +57,37 @@ window.onload = function init() {
     gl.enableVertexAttribArray(vPosition);
 
     var g_tex_ready = 0;
-    var cubemap = [
-        '../textures/cm_left.png',   // POSITIVE_X
-        '../textures/cm_right.png',   // NEGATIVE_X
-        '../textures/cm_top.png',    // POSITIVE_Y
-        '../textures/cm_bottom.png', // NEGATIVE_Y
-        '../textures/cm_back.png',   // POSITIVE_Z
-        '../textures/cm_front.png'    // NEGATIVE_Z
-    ];
-    gl.activeTexture(gl.TEXTURE0);
-    var texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    for (var i = 0; i < 6; ++i) {
-        var image = document.createElement('img');
-        image.crossorigin = 'anonymous';
-        image.textarget = gl.TEXTURE_CUBE_MAP_POSITIVE_X + i;
-        image.onload = function(event){
-            var image = event.target;
-            gl.activeTexture(gl.TEXTURE0);
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-            gl.texImage2D(image.textarget, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-            ++g_tex_ready;
-        };
-        image.src = cubemap[i];
+    function initTexture() {
+        var cubemap = [
+            '../textures/cm_left.png', // POSITIVE_X
+            '../textures/cm_right.png', // NEGATIVE_X
+            '../textures/cm_top.png', // POSITIVE_Y
+            '../textures/cm_bottom.png', // NEGATIVE_Y
+            '../textures/cm_back.png', // POSITIVE_Z
+            '../textures/cm_front.png' // NEGATIVE_Z
+        ];
+
+        gl.activeTexture(gl.TEXTURE0);
+        var texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+        for(var i = 0; i < 6; ++i) {
+            var image = document.createElement('img');
+            image.crossorigin = 'anonymous';
+            image.textarget = gl.TEXTURE_CUBE_MAP_POSITIVE_X + i;
+            image.onload = function(event) {
+                var image = event.target;
+                gl.activeTexture(gl.TEXTURE0);
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                gl.texImage2D(image.textarget, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+                ++g_tex_ready;
+            };
+            image.src = cubemap[i];
+        }
+        gl.uniform1i(gl.getUniformLocation(program, "texMap"), 0);
     }
-    gl.uniform1i(gl.getUniformLocation(program, "texMap"), 0);
 
     var modelViewLoc = gl.getUniformLocation(program, "modelView");
     var projectionLoc = gl.getUniformLocation(program, "projection");
@@ -131,9 +135,11 @@ window.onload = function init() {
     }
     
     function render() {
-        if (g_tex_ready < 6) return;
+        if (g_tex_ready < 6) {
+            requestAnimationFrame(render);
+            return;
+        }
         gl.clear(gl.COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
-        initSphere(gl, numSubdivs);
         theta += 0.02;
         var eye = vec3(5.0 * Math.sin(theta), 0.0, 5.0 * Math.cos(theta));
         var at  = vec3(0.0, 0.0, 0.0);
@@ -145,6 +151,7 @@ window.onload = function init() {
         gl.drawArrays(gl.TRIANGLES, 0, pointsArray.length);
         requestAnimationFrame(render);
     }
-
+    initTexture();
+    initSphere(gl, numSubdivs);
     render();
 }

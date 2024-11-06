@@ -12,6 +12,9 @@ window.onload = function init() {
     gl.clearColor(0.3921, 0.5843, 0.9294, 1.0);
     var program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
+
+    var circulation = true;
+    var theta = 0;
     
     var vertices = [
         vec3(-2.0, -1.0, -1.0),
@@ -97,18 +100,38 @@ window.onload = function init() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
+    var mp = mat4(
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, -1.0 / 3.0, 0.0, 0.0
+    );
+
     function render() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        if (circulation) theta += 0.02;
         var indices = [0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8, 10, 11];
         var indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
+        gl.uniformMatrix4fv(modelLoc, false, flatten(model));
         gl.uniform1i(gl.getUniformLocation(program, "texMap"), 0);
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
+        var shadowModel = mult(translate(2 * Math.sin(theta), 2, -2 + 2 * Math.cos(theta)), mult(mp, translate(-2 * Math.sin(theta), -2, -(-2 + 2 * Math.cos(theta)))));
+        gl.uniformMatrix4fv(modelLoc, false, flatten(shadowModel));
         gl.uniform1i(gl.getUniformLocation(program, "texMap"), 1);
         gl.drawElements(gl.TRIANGLES, 12, gl.UNSIGNED_BYTE, 6);
-        requestAnimationFrame(render);
+        gl.uniformMatrix4fv(modelLoc, false, flatten(model));
+        gl.uniform1i(gl.getUniformLocation(program, "texMap"), 1);
+        gl.drawElements(gl.TRIANGLES, 12, gl.UNSIGNED_BYTE, 6);
+        if (circulation) requestAnimationFrame(render);
     }
 
+    var circulationButton = document.getElementById("circulation");
+    circulationButton.addEventListener("click", function() {
+        circulation = !circulation;
+        if (circulation) requestAnimationFrame(render);
+    });
+    
     render();
 }

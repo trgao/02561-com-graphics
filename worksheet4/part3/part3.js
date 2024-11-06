@@ -93,7 +93,7 @@ window.onload = function init() {
     }
     
     function render() {
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         initSphere(gl, numSubdivs);
         if (orbit) theta += 0.02;
         var eye = vec3(5.0 * Math.sin(theta), 0.0, 5.0 * Math.cos(theta));

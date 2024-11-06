@@ -70,7 +70,7 @@ window.onload = function init() {
         gl.uniformMatrix4fv(modelLoc, false, flatten(model));
         gl.uniformMatrix4fv(viewLoc, false, flatten(view));
         gl.uniformMatrix4fv(projectionLoc, false, flatten(projection));
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawElements(gl.LINES, wire_indices.length, gl.UNSIGNED_INT, 0);
 
         model = translate(0.0, -0.5, 0.0);

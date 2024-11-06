@@ -66,7 +66,7 @@ window.onload = function init() {
     gl.uniformMatrix4fv(projectionLoc, false, flatten(projection));
 
     function render() {
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawElements(gl.LINES, wire_indices.length, gl.UNSIGNED_INT, 0);
     }
 

@@ -88,7 +88,7 @@ window.onload = function init() {
 
     function render() {
         gl.uniform1i(gl.getUniformLocation(program, "texMap"), 0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
     }
 

@@ -65,7 +65,7 @@ window.onload = async function init() {
     var far = 1;
     
     function render() {
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         if (orbit) theta += 0.02;
         var eye = vec3(300.0 * Math.sin(theta), 0.0, 300.0 * Math.cos(theta));
         var at  = vec3(0.0, 0.0, 0.0);

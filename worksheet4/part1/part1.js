@@ -83,7 +83,7 @@ window.onload = function init() {
     
     function render(numSubdivs) {
         initSphere(gl, numSubdivs);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, pointsArray.length);
     }
 

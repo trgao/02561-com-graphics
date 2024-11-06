@@ -80,7 +80,7 @@ window.onload = function init() {
     gl.uniformMatrix4fv(viewLoc, false, flatten(view));
     gl.uniformMatrix4fv(projectionLoc, false, flatten(projection));
     
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     var indices = [0, 1, 2, 0, 2, 3];
     var indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);

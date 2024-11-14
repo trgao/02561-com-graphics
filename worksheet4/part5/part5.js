@@ -150,7 +150,7 @@ window.onload = function init() {
     });
     kaslide.addEventListener("input", function(event) {
         ka = event.target.value;
-        gl.uniform1f(gl.getUniformLocation(program, "ka"), la);
+        gl.uniform1f(gl.getUniformLocation(program, "ka"), ka);
         if (!orbit) render();
     });
     kdslide.addEventListener("input", function(event) {

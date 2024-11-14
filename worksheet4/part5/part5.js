@@ -24,19 +24,17 @@ window.onload = function init() {
     var vd = vec4(0.816497, -0.471405, -0.333333, 1.0);
 
     var lightPos = vec4(0.0, 0.0, -1.0, 0.0);
-    var lightIntensity = vec4(1.0, 1.0, 1.0, 1.0);
-    var le = 0.0;
-    var la = vec4(0.5, 0.5, 0.5, 1.0);
-    var kd = vec4(0.5, 0.5, 0.5, 1.0);
-    var ks = vec4(0.5, 0.5, 0.5, 1.0);
-    var s = 500.0;
+    var le = 1.0;
+    var ka = 0.5;
+    var kd = 0.5;
+    var ks = 0.5;
+    var s = 10.0;
 
     gl.uniform4fv(gl.getUniformLocation(program, "lightPos"), flatten(lightPos));
-    gl.uniform4fv(gl.getUniformLocation(program, "lightIntensity"), flatten(lightIntensity));
     gl.uniform1f(gl.getUniformLocation(program, "le"), le);
-    gl.uniform4fv(gl.getUniformLocation(program, "la"), flatten(la));
-    gl.uniform4fv(gl.getUniformLocation(program, "kd"), flatten(kd));
-    gl.uniform4fv(gl.getUniformLocation(program, "ks"), flatten(ks));
+    gl.uniform1f(gl.getUniformLocation(program, "ka"), ka);
+    gl.uniform1f(gl.getUniformLocation(program, "kd"), kd);
+    gl.uniform1f(gl.getUniformLocation(program, "ks"), ks);
     gl.uniform1f(gl.getUniformLocation(program, "s"), s);
 
     var pointsArray = [];
@@ -61,8 +59,8 @@ window.onload = function init() {
     var projectionLoc = gl.getUniformLocation(program, "projection");
     var fov = 45;
     var aspect = canvas.width / canvas.height;
-    var near = -100;
-    var far = 1;
+    var near = 1;
+    var far = 100;
 
     function tetrahedron(a, b, c, d, n) {
         divideTriangle(a, b, c, n);
@@ -114,7 +112,7 @@ window.onload = function init() {
         gl.uniformMatrix4fv(modelViewLoc, false, flatten(modelView));
         gl.uniformMatrix4fv(projectionLoc, false, flatten(projection));
         gl.drawArrays(gl.TRIANGLES, 0, pointsArray.length);
-        if (orbit) requestAnimationFrame(render);
+        requestAnimationFrame(render);
     }
 
     var increment = document.getElementById("increment");
@@ -125,25 +123,22 @@ window.onload = function init() {
         if (numSubdivs < 8) numSubdivs++;
         pointsArray = [];
         normalsArray = [];
-        if (orbit) initSphere(gl, numSubdivs);
-        else render();
+        initSphere(gl, numSubdivs);
     });
 
     decrement.addEventListener("click", function() {
         if (numSubdivs > 0) numSubdivs--;
         pointsArray = [];
         normalsArray = [];
-        if (orbit) initSphere(gl, numSubdivs);
-        else render();
+        initSphere(gl, numSubdivs);
     });
 
     orbitButton.addEventListener("click", function() {
         orbit = !orbit;
-        if (orbit) render();
     });
 
     var leslide = document.getElementById("le");
-    var laslide = document.getElementById("la");
+    var kaslide = document.getElementById("ka");
     var kdslide = document.getElementById("kd");
     var ksslide = document.getElementById("ks");
     var sslide = document.getElementById("s");
@@ -153,19 +148,19 @@ window.onload = function init() {
         gl.uniform1f(gl.getUniformLocation(program, "le"), le);
         if (!orbit) render();
     });
-    laslide.addEventListener("input", function(event) {
-        la = vec4(event.target.value, event.target.value, event.target.value, 1.0);
-        gl.uniform4fv(gl.getUniformLocation(program, "la"), la);
+    kaslide.addEventListener("input", function(event) {
+        ka = event.target.value;
+        gl.uniform1f(gl.getUniformLocation(program, "ka"), la);
         if (!orbit) render();
     });
     kdslide.addEventListener("input", function(event) {
-        kd = vec4(event.target.value, event.target.value, event.target.value, 1.0);
-        gl.uniform4fv(gl.getUniformLocation(program, "kd"), kd);
+        kd = event.target.value;
+        gl.uniform1f(gl.getUniformLocation(program, "kd"), kd);
         if (!orbit) render();
     });
     ksslide.addEventListener("input", function(event) {
-        ks = vec4(event.target.value, event.target.value, event.target.value, 1.0);
-        gl.uniform4fv(gl.getUniformLocation(program, "ks"), ks);
+        ks = event.target.value;
+        gl.uniform1f(gl.getUniformLocation(program, "ks"), ks);
         if (!orbit) render();
     });
     sslide.addEventListener("input", function(event) {

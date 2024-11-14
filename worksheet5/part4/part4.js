@@ -44,19 +44,17 @@ window.onload = async function init() {
     }
 
     var lightPos = vec4(0.0, 0.0, -1.0, 0.0);
-    var lightIntensity = vec4(1.0, 1.0, 1.0, 1.0);
-    var le = 0.0;
-    var la = vec4(0.5, 0.5, 0.5, 1.0);
-    var kd = vec4(0.5, 0.5, 0.5, 1.0);
-    var ks = vec4(0.5, 0.5, 0.5, 1.0);
-    var s = 500.0;
+    var le = vec3(1.0, 1.0, 1.0);
+    var ka = 0.5;
+    var kd = 0.5;
+    var ks = 0.5;
+    var s = 10.0;
 
     gl.uniform4fv(gl.getUniformLocation(gl.program, "lightPos"), flatten(lightPos));
-    gl.uniform4fv(gl.getUniformLocation(gl.program, "lightIntensity"), flatten(lightIntensity));
-    gl.uniform1f(gl.getUniformLocation(gl.program, "le"), le);
-    gl.uniform4fv(gl.getUniformLocation(gl.program, "la"), flatten(la));
-    gl.uniform4fv(gl.getUniformLocation(gl.program, "kd"), flatten(kd));
-    gl.uniform4fv(gl.getUniformLocation(gl.program, "ks"), flatten(ks));
+    gl.uniform3fv(gl.getUniformLocation(gl.program, "le"), le);
+    gl.uniform1f(gl.getUniformLocation(gl.program, "ka"), ka);
+    gl.uniform1f(gl.getUniformLocation(gl.program, "kd"), kd);
+    gl.uniform1f(gl.getUniformLocation(gl.program, "ks"), ks);
     gl.uniform1f(gl.getUniformLocation(gl.program, "s"), s);
 
     // Get the storage locations of attribute and uniform variables
@@ -68,7 +66,7 @@ window.onload = async function init() {
     var model = initVertexBuffers(gl, gl.program);
     
     // Start reading the OBJ file
-    var drawingInfo = await readOBJFile("../suzanne/suzanne.obj", 60, true);
+    var drawingInfo = await readOBJFile("../suzanne/suzanne.obj", 1, true);
 
     var theta = 0;
     var orbit = true;
@@ -77,13 +75,13 @@ window.onload = async function init() {
     var projectionLoc = gl.getUniformLocation(gl.program, "projection");
     var fov = 45;
     var aspect = canvas.width / canvas.height;
-    var near = -100;
-    var far = 1;
+    var near = 1;
+    var far = -10;
     
     function render() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         if (orbit) theta += 0.02;
-        var eye = vec3(300.0 * Math.sin(theta), 0.0, 300.0 * Math.cos(theta));
+        var eye = vec3(7.0 * Math.sin(theta), 0.0, 7.0 * Math.cos(theta));
         var at  = vec3(0.0, 0.0, 0.0);
         var up  = vec3(0.0, 1.0, 0.0);
         var modelView = lookAt(eye, at, up);
@@ -100,40 +98,39 @@ window.onload = async function init() {
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.indexBuffer);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, drawingInfo.indices, gl.STATIC_DRAW);
             gl.drawElements(gl.TRIANGLES, drawingInfo.indices.length, gl.UNSIGNED_INT, 0);
-            if (orbit) requestAnimationFrame(render);
         }
+        requestAnimationFrame(render);
     }
 
     var orbitButton = document.getElementById("orbit");
     orbitButton.addEventListener("click", function() {
         orbit = !orbit;
-        if (orbit) render();
     });
 
     var leslide = document.getElementById("le");
-    var laslide = document.getElementById("la");
+    var kaslide = document.getElementById("ka");
     var kdslide = document.getElementById("kd");
     var ksslide = document.getElementById("ks");
     var sslide = document.getElementById("s");
 
     leslide.addEventListener("input", function(event) {
-        le = event.target.value;
-        gl.uniform1f(gl.getUniformLocation(gl.program, "le"), le);
+        le = vec3(event.target.value, event.target.value, event.target.value);
+        gl.uniform3fv(gl.getUniformLocation(gl.program, "le"), le);
         if (!orbit) render();
     });
-    laslide.addEventListener("input", function(event) {
-        la = vec4(event.target.value, event.target.value, event.target.value, 1.0);
-        gl.uniform4fv(gl.getUniformLocation(gl.program, "la"), la);
+    kaslide.addEventListener("input", function(event) {
+        ka = event.target.value;
+        gl.uniform1f(gl.getUniformLocation(gl.program, "ka"), ka);
         if (!orbit) render();
     });
     kdslide.addEventListener("input", function(event) {
-        kd = vec4(event.target.value, event.target.value, event.target.value, 1.0);
-        gl.uniform4fv(gl.getUniformLocation(gl.program, "kd"), kd);
+        kd = event.target.value;
+        gl.uniform1f(gl.getUniformLocation(gl.program, "kd"), kd);
         if (!orbit) render();
     });
     ksslide.addEventListener("input", function(event) {
-        ks = vec4(event.target.value, event.target.value, event.target.value, 1.0);
-        gl.uniform4fv(gl.getUniformLocation(gl.program, "ks"), ks);
+        ks = event.target.value;
+        gl.uniform1f(gl.getUniformLocation(gl.program, "ks"), ks);
         if (!orbit) render();
     });
     sslide.addEventListener("input", function(event) {

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="../../angelCommon/initShaders.js"></script>
+        <script type="text/javascript" src="../../angelCommon/MV.js"></script>
+        <script type="text/javascript" src="../../angelCommon/webgl-utils.js"></script>
+        <script type="text/javascript" src="../../angelCommon/OBJParser.js"></script>
+        <script type="text/javascript" src="part1.js"></script>
+        <script id ="vertex-shader-ground" type="x-shader/x-vertex">
+            attribute vec4 a_Position;
+            attribute vec2 vTexCoord;
+            uniform mat4 model;
+            uniform mat4 view;
+            uniform mat4 projection;
+            varying vec2 fTexCoord;
+            void main() {
+                gl_Position = projection * view * model * a_Position;
+                fTexCoord = vTexCoord;
+            }
+        </script>
+        <script id="fragment-shader-ground"type="x-shader/x-fragment">
+            precision mediump float;
+            varying vec2 fTexCoord;
+            uniform sampler2D texMap;
+            void main() {
+                gl_FragColor = texture2D(texMap, fTexCoord);
+            }
+        </script>
+        <script id ="vertex-shader-teapot" type="x-shader/x-vertex">
+            attribute vec4 a_Position;
+            attribute vec4 a_Color;
+            uniform mat4 modelView;
+            uniform mat4 projection;
+            varying vec4 vColor;
+            void main() {
+                gl_Position = projection * modelView * a_Position;
+                vColor = a_Color;
+            }
+        </script>
+        <script id="fragment-shader-teapot"type="x-shader/x-fragment">
+            precision mediump float;
+            varying vec4 vColor;
+            uniform int visibility;
+            void main() {
+                if (visibility == 1) {
+                    gl_FragColor = vColor;
+                } else {
+                    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <canvas id="c" height="512" width="512">
+            HTML5 canvas not supported. 
+        </canvas>
+        <br/>
+        <button id="circulation">Toggle circulation</button>
+        <button id="bob">Toggle bob</button>
+    </body>
+</html>

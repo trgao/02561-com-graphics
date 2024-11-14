@@ -21,31 +21,28 @@
         <script id="fragment-shader"type="x-shader/x-fragment">
             precision mediump float;
             uniform highp mat4 modelView;
-            uniform highp mat4 projection;
-            uniform vec4 lightIntensity;
             uniform vec4 lightPos;
             uniform float le;
-            uniform vec4 la;
-            uniform vec4 kd;
-            uniform vec4 ks;
+            uniform float ka;
+            uniform float kd;
+            uniform float ks;
             uniform float s;
             varying vec4 vPosition;
             varying vec4 vNormal;
             void main() {
-                vec4 pos = projection * modelView * vPosition;
+                vec4 pos = modelView * vPosition;
                 vec4 clightPos = modelView * lightPos;
-                vec3 norm = normalize((modelView * vNormal)).xyz;
+                vec3 norm = normalize(modelView * vNormal).xyz;
                 vec3 wi = clightPos.w == 0.0 ? normalize(-clightPos.xyz) : normalize(clightPos.xyz - pos.xyz);
                 vec3 wo = normalize(-pos).xyz;
                 vec3 wr = normalize(2.0 * dot(wi, norm) * norm - wi);
                 vec3 wh = normalize(wi + wo);
-                vec4 lrd = kd * le * lightIntensity * max(dot(norm, wi), 0.0);
-                vec4 lrs = ks * lightIntensity * pow(max(dot(wh, norm), 0.0), s);
-                vec4 lra = kd * la;
-                vec4 lo = lrd + lrs + lra;
-                lo.a = 1.0;
-                vec4 vColor = 0.5 * vPosition + 0.5 * lo;
-                gl_FragColor = vColor;
+                float lrd = kd * le * max(dot(norm, wi), 0.0);
+                float lrs = ks * le * pow(max(dot(wh, norm), 0.0), s);
+                float lra = ka * le;
+                float lo = lrd + lrs + lra;
+                vec3 vColor = 0.5 * vPosition.xyz + 0.5;
+                gl_FragColor = vec4(vColor * lo, 1);
             }
         </script>
     </head>
@@ -70,7 +67,7 @@
             <label>Light ambience (L_a)</label>
             &emsp;
             <label>0</label>
-            <input id="la" type="range" min="0" max="1" value="0.5" step="0.1"/>
+            <input id="ka" type="range" min="0" max="1" value="0.5" step="0.1"/>
             <label>1</label>
         </span>
         <br/>
@@ -94,8 +91,8 @@
             <label>Shininess (s)</label>
             &emsp;
             <label>0</label>
-            <input id="s" type="range" min="0" max="1000" value="500" step="5"/>
-            <label>1000</label>
+            <input id="s" type="range" min="0" max="100" value="10" step="1"/>
+            <label>100</label>
         </span>
     </body>
 </html>

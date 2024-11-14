@@ -115,7 +115,6 @@ window.onload = function init() {
         var indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
-        gl.uniformMatrix4fv(modelLoc, false, flatten(model));
         gl.uniform1i(gl.getUniformLocation(program, "texMap"), 0);
         gl.uniform1i(gl.getUniformLocation(program, "visibility"), 1);
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_BYTE, 0);
@@ -130,13 +129,12 @@ window.onload = function init() {
         gl.uniform1i(gl.getUniformLocation(program, "texMap"), 1);
         gl.uniform1i(gl.getUniformLocation(program, "visibility"), 1);
         gl.drawElements(gl.TRIANGLES, 12, gl.UNSIGNED_BYTE, 6);
-        if (circulation) requestAnimationFrame(render);
+        requestAnimationFrame(render);
     }
 
     var circulationButton = document.getElementById("circulation");
     circulationButton.addEventListener("click", function() {
         circulation = !circulation;
-        if (circulation) requestAnimationFrame(render);
     });
     
     render();

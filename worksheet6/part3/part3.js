@@ -75,8 +75,8 @@ window.onload = function init() {
     var projectionLoc = gl.getUniformLocation(program, "projection");
     var fov = 45;
     var aspect = canvas.width / canvas.height;
-    var near = -100;
-    var far = 1;
+    var near = 1;
+    var far = 100;
 
     function tetrahedron(a, b, c, d, n) {
         divideTriangle(a, b, c, n);

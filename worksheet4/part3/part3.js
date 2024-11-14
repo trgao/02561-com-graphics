@@ -51,8 +51,8 @@ window.onload = function init() {
     var projectionLoc = gl.getUniformLocation(program, "projection");
     var fov = 45;
     var aspect = canvas.width / canvas.height;
-    var near = -100;
-    var far = 1;
+    var near = 1;
+    var far = 100;
 
     function tetrahedron(a, b, c, d, n) {
         divideTriangle(a, b, c, n);
@@ -104,7 +104,7 @@ window.onload = function init() {
         gl.uniformMatrix4fv(modelViewLoc, false, flatten(modelView));
         gl.uniformMatrix4fv(projectionLoc, false, flatten(projection));
         gl.drawArrays(gl.TRIANGLES, 0, pointsArray.length);
-        if (orbit) requestAnimationFrame(render);
+        requestAnimationFrame(render);
     }
 
     var increment = document.getElementById("increment");
@@ -115,21 +115,18 @@ window.onload = function init() {
         numSubdivs++;
         pointsArray = [];
         normalsArray = [];
-        if (orbit) initSphere(gl, numSubdivs);
-        else render();
+        initSphere(gl, numSubdivs);
     });
 
     decrement.addEventListener("click", function() {
         if (numSubdivs > 0) numSubdivs--;
         pointsArray = [];
         normalsArray = [];
-        if (orbit) initSphere(gl, numSubdivs);
-        else render();
+        initSphere(gl, numSubdivs);
     });
 
     orbitButton.addEventListener("click", function() {
         orbit = !orbit;
-        if (orbit) render();
     });
 
     render();

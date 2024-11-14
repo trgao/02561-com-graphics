@@ -37,8 +37,8 @@ window.onload = function init() {
     var projectionLoc = gl.getUniformLocation(program, "projection");
     var fov = 45;
     var aspect = canvas.width / canvas.height;
-    var near = -100;
-    var far = 1;
+    var near = 1;
+    var far = 100;
 
     var eye = vec3(0.0, 0.0, 5.0);
     var at  = vec3(0.0, 0.0, 0.0);

@@ -124,13 +124,12 @@ window.onload = function init() {
         gl.uniformMatrix4fv(modelLoc, false, flatten(model));
         gl.uniform1i(gl.getUniformLocation(program, "texMap"), 1);
         gl.drawElements(gl.TRIANGLES, 12, gl.UNSIGNED_BYTE, 6);
-        if (circulation) requestAnimationFrame(render);
+        requestAnimationFrame(render);
     }
 
     var circulationButton = document.getElementById("circulation");
     circulationButton.addEventListener("click", function() {
         circulation = !circulation;
-        if (circulation) requestAnimationFrame(render);
     });
     
     render();

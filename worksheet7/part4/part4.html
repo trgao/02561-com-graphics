@@ -47,9 +47,10 @@
                 vec2 fTexCoord = vec2(u, v);
                 vec3 newCoords = texCoords.xyz;
                 if (reflective) {
+                    vec3 diff = vPosition.xyz - eyePos;
                     vec3 c = texture2D(normalMap, fTexCoord).xyz;
-                    vec3 nbump = rotate_to_normal(vNormal.xyz, 2.0 * c - 1.0);
-                    newCoords = reflect(vPosition.xyz - eyePos, nbump);
+                    newCoords = normalize(reflect(diff, vPosition.xyz));
+                    newCoords = rotate_to_normal(newCoords, 2.0 * c - 1.0);
                 }
                 gl_FragColor = textureCube(texMap, newCoords);
             }

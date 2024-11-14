@@ -17,7 +17,9 @@ window.onload = async function init() {
         console.log('Warning: Unable to use an extension');
     }
 
+    var circulation = true;
     var bob = true;
+    var theta = 0;
     var alpha = 0;
     
     // Load ground
@@ -85,6 +87,7 @@ window.onload = async function init() {
 
     function render() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        if (circulation) theta += 0.02;
         if (bob) alpha += 0.02;
 
         // Render ground
@@ -117,6 +120,7 @@ window.onload = async function init() {
         // Render teapot
         if (drawingInfo) {
             gl.useProgram(teapotProgram);
+            gl.depthFunc(gl.GREATER);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, tvBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, drawingInfo.vertices, gl.STATIC_DRAW);
@@ -136,12 +140,29 @@ window.onload = async function init() {
             var modelViewLoc = gl.getUniformLocation(teapotProgram, "modelView");
             var projectionLoc = gl.getUniformLocation(teapotProgram, "projection");
             var modelView = translate(0, -0.25 - 0.75 * Math.sin(alpha), -3);
+            var shadowModel = [
+                translate(2 * Math.sin(theta), 2, -2 + 2 * Math.cos(theta)), 
+                mp,
+                translate(-2 * Math.sin(theta), -2, -(-2 + 2 * Math.cos(theta))),
+                modelView
+            ].reduce(mult);
+            gl.uniformMatrix4fv(modelViewLoc, false, flatten(shadowModel));
+            gl.uniformMatrix4fv(projectionLoc, false, flatten(projection));
+            gl.uniform1i(gl.getUniformLocation(teapotProgram, "visibility"), 0);
+            gl.drawElements(gl.TRIANGLES, drawingInfo.indices.length, gl.UNSIGNED_INT, 0);
+            gl.depthFunc(gl.LESS);
             gl.uniformMatrix4fv(modelViewLoc, false, flatten(modelView));
             gl.uniformMatrix4fv(projectionLoc, false, flatten(projection));
+            gl.uniform1i(gl.getUniformLocation(teapotProgram, "visibility"), 1);
             gl.drawElements(gl.TRIANGLES, drawingInfo.indices.length, gl.UNSIGNED_INT, 0);
         }
         requestAnimationFrame(render);
     }
+
+    var circulationButton = document.getElementById("circulation");
+    circulationButton.addEventListener("click", function() {
+        circulation = !circulation;
+    });
 
     var bobButton = document.getElementById("bob");
     bobButton.addEventListener("click", function() {

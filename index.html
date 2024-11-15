@@ -4,11 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>02561 Computer Graphics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #6495ED;
+            color: #333;
+            margin: 0;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #f4f4f9;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .card ul {
+            list-style: none;
+        }
+        .card li {
+            margin: 10px 0;
+        }
+        .card a {
+            text-decoration: none;
+            color: #6495ED;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+        .card a:hover {
+            color: #0056b3;
+        }
+        footer {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <h1>02561 Computer Graphics</h1>
-    <div style="display:flex; gap:30px; flex-wrap:wrap;">
-        <div>
+    <h1>02561 Computer Graphics Lab Journal</h1>
+    <div class="container">
+        <div class="card">
             <h3>Worksheet 1</h3>
             <ul>
                 <li><a href="worksheet1/part1/part1.html">Part 1</a></li>
@@ -18,7 +85,7 @@
                 <li><a href="worksheet1/part5/part5.html">Part 5</a></li>
             </ul>
         </div>
-        <div>
+        <div class="card">
             <h3>Worksheet 2</h3>
             <ul>
                 <li><a href="worksheet2/part1/part1.html">Part 1</a></li>
@@ -27,14 +94,15 @@
                 <li><a href="worksheet2/part4/part4.html">Part 4</a></li>
             </ul>
         </div>
-        <div>
+        <div class="card">
             <h3>Worksheet 3</h3>
             <ul>
                 <li><a href="worksheet3/part1/part1.html">Part 1</a></li>
                 <li><a href="worksheet3/part2/part2.html">Part 2</a></li>
+                <li><a href="worksheet3/part3/part3.html">Part 3</a></li>
             </ul>
         </div>
-        <div>
+        <div class="card">
             <h3>Worksheet 4</h3>
             <ul>
                 <li><a href="worksheet4/part1/part1.html">Part 1</a></li>
@@ -42,16 +110,18 @@
                 <li><a href="worksheet4/part3/part3.html">Part 3</a></li>
                 <li><a href="worksheet4/part4/part4.html">Part 4</a></li>
                 <li><a href="worksheet4/part5/part5.html">Part 5</a></li>
+                <li><a href="worksheet4/part6/part6.html">Part 6</a></li>
             </ul>
         </div>
-        <div>
+        <div class="card">
             <h3>Worksheet 5</h3>
             <ul>
                 <li><a href="worksheet5/part3/part3.html">Part 3</a></li>
                 <li><a href="worksheet5/part4/part4.html">Part 4</a></li>
+                <li><a href="worksheet5/part5/part5.html">Part 5</a></li>
             </ul>
         </div>
-        <div>
+        <div class="card">
             <h3>Worksheet 6</h3>
             <ul>
                 <li><a href="worksheet6/part1/part1.html">Part 1</a></li>
@@ -59,7 +129,7 @@
                 <li><a href="worksheet6/part3/part3.html">Part 3</a></li>
             </ul>
         </div>
-        <div>
+        <div class="card">
             <h3>Worksheet 7</h3>
             <ul>
                 <li><a href="worksheet7/part1/part1.html">Part 1</a></li>
@@ -68,7 +138,7 @@
                 <li><a href="worksheet7/part4/part4.html">Part 4</a></li>
             </ul>
         </div>
-        <div>
+        <div class="card">
             <h3>Worksheet 8</h3>
             <ul>
                 <li><a href="worksheet8/part1/part1.html">Part 1</a></li>
@@ -77,13 +147,12 @@
                 <li><a href="worksheet8/part4/part4.html">Part 4</a></li>
             </ul>
         </div>
-        <div>
+        <div class="card">
             <h3>Worksheet 9</h3>
             <ul>
                 <li><a href="worksheet9/part1/part1.html">Part 1</a></li>
                 <li><a href="worksheet9/part2/part2.html">Part 2</a></li>
-                <li><a href="worksheet9/part3/part3.html">Part 3</a></li>
-                <li><a href="worksheet9/part4/part4.html">Part 4</a></li>
+                <li><a href="worksheet9/part34/part34.html">Part 3/4</a></li>
                 <li><a href="worksheet9/part5/part5.html">Part 5</a></li>
             </ul>
         </div>

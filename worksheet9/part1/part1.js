@@ -70,7 +70,7 @@ window.onload = async function init() {
     var fov = 90;
     var aspect = canvas.width / canvas.height;
     var near = 0.1;
-    var far = 100;
+    var far = 20;
 
     var model = mat4();
     var view = mat4();

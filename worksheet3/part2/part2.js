@@ -61,8 +61,8 @@ window.onload = function init() {
         var far = 1;
 
         var eye = vec3(0.0, 0.0, 10.0);
-        var at  = vec3(0.0, 0.0, 0.0);
-        var up  = vec3(0.0, 1.0, 0.0);
+        var at = vec3(0.0, 0.0, 0.0);
+        var up = vec3(0.0, 1.0, 0.0);
         var model = translate(-3.0, -0.5, 0.0);
         model = mult(rotateY(-15), model);
         var view = lookAt(eye, at, up);

@@ -45,10 +45,10 @@ window.onload = async function init() {
 
     var lightPos = vec4(0.0, 0.0, -1.0, 0.0);
     var le = vec3(1.0, 1.0, 1.0);
-    var ka = 0.5;
-    var kd = 0.5;
+    var ka = 0.7;
+    var kd = 0.6;
     var ks = 0.5;
-    var s = 10.0;
+    var s = 3.0;
 
     gl.uniform4fv(gl.getUniformLocation(gl.program, "lightPos"), flatten(lightPos));
     gl.uniform3fv(gl.getUniformLocation(gl.program, "le"), le);
@@ -68,22 +68,89 @@ window.onload = async function init() {
     // Start reading the OBJ file
     var drawingInfo = await readOBJFile("../suzanne/suzanne.obj", 1, true);
 
-    var theta = 0;
-    var orbit = true;
+    var qrot = new Quaternion();
+    var qinc = new Quaternion();
 
     var modelViewLoc = gl.getUniformLocation(gl.program, "modelView");
     var projectionLoc = gl.getUniformLocation(gl.program, "projection");
     var fov = 45;
     var aspect = canvas.width / canvas.height;
     var near = 1;
-    var far = 20;
-    
+    var far = 50;
+
+    function calculate(x, y) {
+        var d = Math.sqrt(x * x + y * y);
+        if (d <= Math.sqrt(2)) return Math.sqrt(4 - d * d);
+        else return 1.0 / d;
+    }
+
+    var dragging = false; // Dragging or not
+    var eye_dist = 1;
+    var pan = vec2(0.0, 0.0);
+    var lastX = -1, lastY = 1; // Last position of the mouse
+    var mode = "orbit";
+    canvas.onmousedown = function(ev) {
+        if (ev.button == 0) {
+            mode = "orbit";
+        } else if (ev.button = 2) {
+            mode = "pan";
+        }
+        // Mouse is pressed
+        var x = ev.clientX, y = ev.clientY;
+        // Start dragging if a mouse is in  <canvas>
+        var rect = ev.target.getBoundingClientRect();
+        if (rect.left <= x && x < rect.right && rect.top <= y && y < rect.bottom) {
+            lastX = 2 * (x - rect.left) / rect.width - 1;
+            lastY = 2 * (rect.height - y + rect.top - 1) / rect.height - 1;
+            dragging = true;
+        }
+    };
+   
+    // Mouse is released
+    canvas.onmouseup = function() {
+        dragging = false;
+    };
+    // Mouse exits out of canvas
+    canvas.onmouseleave = function() {
+        dragging = false;
+    };
+
+    // For orbit and panning control
+    canvas.onmousemove = function(ev) {
+        var rect = ev.target.getBoundingClientRect();
+        // Mouse is moved
+        var x = ev.clientX, y = ev.clientY;
+        if (dragging) {
+            x = 2 * (x - rect.left) / rect.width - 1;
+            y = 2 * (rect.height - y + rect.top - 1) / rect.height - 1;
+            var u = vec3(lastX, lastY, calculate(lastX, lastY));
+            var v = vec3(x, y, calculate(x, y));
+            if (mode == "orbit") {
+                qinc = qinc.make_rot_vec2vec(normalize(v), normalize(u));
+                qrot = qrot.multiply(qinc);
+            } else {
+                pan = add(pan, scale(0.25 * eye_dist, vec2(subtract(u, v))));
+            }
+        }
+        lastX = x, lastY = y;
+    };
+
+    // For dolly control
+    canvas.onwheel = function(ev) {
+        ev.preventDefault();
+        eye_dist = Math.min(40, Math.max(1, eye_dist + ev.deltaY * 0.02));
+    }
+
+    canvas.oncontextmenu = function(ev) {
+        ev.preventDefault();
+    }
+
     function render() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        if (orbit) theta += 0.02;
-        var eye = vec3(7.0 * Math.sin(theta), 0.0, 7.0 * Math.cos(theta));
-        var at = vec3(0.0, 0.0, 0.0);
-        var up = vec3(0.0, 1.0, 0.0);
+        var eye = qrot.apply(vec3(0.0, 0.0, 6.0 + eye_dist));
+        var right = qrot.apply(vec3(1.0, 0.0, 0.0));
+        var up = qrot.apply(vec3(0.0, 1.0, 0.0));
+        var at = add(scale(pan[0], right), scale(pan[1], up));
         var modelView = lookAt(eye, at, up);
         var projection = perspective(fov, aspect, near, far);
         gl.uniformMatrix4fv(modelViewLoc, false, flatten(modelView));
@@ -101,43 +168,6 @@ window.onload = async function init() {
         }
         requestAnimationFrame(render);
     }
-
-    var orbitButton = document.getElementById("orbit");
-    orbitButton.addEventListener("click", function() {
-        orbit = !orbit;
-    });
-
-    var leslide = document.getElementById("le");
-    var kaslide = document.getElementById("ka");
-    var kdslide = document.getElementById("kd");
-    var ksslide = document.getElementById("ks");
-    var sslide = document.getElementById("s");
-
-    leslide.addEventListener("input", function(event) {
-        le = vec3(event.target.value, event.target.value, event.target.value);
-        gl.uniform3fv(gl.getUniformLocation(gl.program, "le"), le);
-        if (!orbit) render();
-    });
-    kaslide.addEventListener("input", function(event) {
-        ka = event.target.value;
-        gl.uniform1f(gl.getUniformLocation(gl.program, "ka"), ka);
-        if (!orbit) render();
-    });
-    kdslide.addEventListener("input", function(event) {
-        kd = event.target.value;
-        gl.uniform1f(gl.getUniformLocation(gl.program, "kd"), kd);
-        if (!orbit) render();
-    });
-    ksslide.addEventListener("input", function(event) {
-        ks = event.target.value;
-        gl.uniform1f(gl.getUniformLocation(gl.program, "ks"), ks);
-        if (!orbit) render();
-    });
-    sslide.addEventListener("input", function(event) {
-        s = event.target.value;
-        gl.uniform1f(gl.getUniformLocation(gl.program, "s"), s);
-        if (!orbit) render();
-    });
 
     render();
 }

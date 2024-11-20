@@ -97,8 +97,8 @@ window.onload = function init() {
         initSphere(gl, numSubdivs);
         if (orbit) theta += 0.02;
         var eye = vec3(5.0 * Math.sin(theta), 0.0, 5.0 * Math.cos(theta));
-        var at  = vec3(0.0, 0.0, 0.0);
-        var up  = vec3(0.0, 1.0, 0.0);
+        var at = vec3(0.0, 0.0, 0.0);
+        var up = vec3(0.0, 1.0, 0.0);
         var modelView = lookAt(eye, at, up);
         var projection = perspective(fov, aspect, near, far);
         gl.uniformMatrix4fv(modelViewLoc, false, flatten(modelView));

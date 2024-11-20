@@ -10,6 +10,7 @@ function setupWebGL(canvas) {
 function initVertexBuffers(gl) {
     var o = new Object();
     o.vertexBuffer = createEmptyArrayBuffer(gl, gl.program.a_Position, 4, gl.FLOAT);
+    o.normalBuffer = createEmptyArrayBuffer(gl, gl.program.a_Normal, 4, gl.FLOAT);
     o.colorBuffer = createEmptyArrayBuffer(gl, gl.program.a_Color, 4, gl.FLOAT);
     o.indexBuffer = gl.createBuffer();
 
@@ -18,7 +19,7 @@ function initVertexBuffers(gl) {
 
 // Create a buffer object, assign it to attribute variables, and enable the assignment
 function createEmptyArrayBuffer(gl, a_attribute, num, type) {
-    var buffer = gl.createBuffer();  // Create a buffer object
+    var buffer =  gl.createBuffer();  // Create a buffer object
 
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.vertexAttribPointer(a_attribute, num, type, false, 0, 0);
@@ -42,8 +43,23 @@ window.onload = async function init() {
         console.log('Warning: Unable to use an extension');
     }
 
+    var lightPos = vec4(0.0, 0.0, -1.0, 0.0);
+    var le = vec3(1.0, 1.0, 1.0);
+    var ka = 0.7;
+    var kd = 0.6;
+    var ks = 0.5;
+    var s = 3.0;
+
+    gl.uniform4fv(gl.getUniformLocation(gl.program, "lightPos"), flatten(lightPos));
+    gl.uniform3fv(gl.getUniformLocation(gl.program, "le"), le);
+    gl.uniform1f(gl.getUniformLocation(gl.program, "ka"), ka);
+    gl.uniform1f(gl.getUniformLocation(gl.program, "kd"), kd);
+    gl.uniform1f(gl.getUniformLocation(gl.program, "ks"), ks);
+    gl.uniform1f(gl.getUniformLocation(gl.program, "s"), s);
+
     // Get the storage locations of attribute and uniform variables
     gl.program.a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    gl.program.a_Normal = gl.getAttribLocation(gl.program, 'a_Normal');
     gl.program.a_Color = gl.getAttribLocation(gl.program, 'a_Color');
 
     // Prepare empty buffer objects for vertex coordinates, colors, and normals
@@ -52,8 +68,8 @@ window.onload = async function init() {
     // Start reading the OBJ file
     var drawingInfo = await readOBJFile("../suzanne/suzanne.obj", 1, true);
 
-    var theta = 0;
-    var orbit = true;
+    var qrot = new Quaternion();
+    var qinc = new Quaternion();
 
     var modelViewLoc = gl.getUniformLocation(gl.program, "modelView");
     var projectionLoc = gl.getUniformLocation(gl.program, "projection");
@@ -61,20 +77,65 @@ window.onload = async function init() {
     var aspect = canvas.width / canvas.height;
     var near = 1;
     var far = 20;
-    
+
+    function calculate(x, y) {
+        var d = Math.sqrt(x * x + y * y);
+        if (d <= 1.0 / Math.sqrt(2)) return Math.sqrt(1 - d * d);
+        else return 1.0 / (2.0 * d);
+    }
+
+    var dragging = false; // Dragging or not
+    var lastX = -1, lastY = 1; // Last position of the mouse
+    canvas.onmousedown = function(ev) {
+        // Mouse is pressed
+        var x = ev.clientX, y = ev.clientY;
+        // Start dragging if a mouse is in  <canvas>
+        var rect = ev.target.getBoundingClientRect();
+        if (rect.left <= x && x < rect.right && rect.top <= y && y < rect.bottom) {
+            lastX = 2 * (x - rect.left) / rect.width - 1;
+            lastY = 2 * (rect.height - y + rect.top - 1) / rect.height - 1;
+            dragging = true;
+        }
+    };
+   
+    // Mouse is released
+    canvas.onmouseup = function() {
+        dragging = false;
+    };
+    // Mouse exits out of canvas
+    canvas.onmouseleave = function() {
+        dragging = false;
+    };
+
+    canvas.onmousemove = function(ev) {
+        var rect = ev.target.getBoundingClientRect();
+        // Mouse is moved
+        var x = ev.clientX, y = ev.clientY;
+        if (dragging) {
+            x = 2 * (x - rect.left) / rect.width - 1;
+            y = 2 * (rect.height - y + rect.top - 1) / rect.height - 1;
+            var u = vec3(lastX, lastY, calculate(lastX, lastY));
+            var v = vec3(x, y, calculate(x, y));
+            qinc = qinc.make_rot_vec2vec(normalize(v), normalize(u));
+            qrot = qrot.multiply(qinc);
+        }
+        lastX = x, lastY = y;
+    };
+
     function render() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        if (orbit) theta += 0.02;
-        var eye = vec3(7.0 * Math.sin(theta), 0.0, 7.0 * Math.cos(theta));
+        var eye = vec3(0.0, 0.0, 7.0);
         var at = vec3(0.0, 0.0, 0.0);
         var up = vec3(0.0, 1.0, 0.0);
-        var modelView = lookAt(eye, at, up);
+        var modelView = lookAt(qrot.apply(eye), at, qrot.apply(up));
         var projection = perspective(fov, aspect, near, far);
         gl.uniformMatrix4fv(modelViewLoc, false, flatten(modelView));
         gl.uniformMatrix4fv(projectionLoc, false, flatten(projection));
         if (drawingInfo) {
             gl.bindBuffer(gl.ARRAY_BUFFER, model.vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, drawingInfo.vertices, gl.STATIC_DRAW);
+            gl.bindBuffer(gl.ARRAY_BUFFER, model.normalBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, drawingInfo.normals, gl.STATIC_DRAW);
             gl.bindBuffer(gl.ARRAY_BUFFER, model.colorBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, drawingInfo.colors, gl.STATIC_DRAW);
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.indexBuffer);
@@ -83,11 +144,6 @@ window.onload = async function init() {
         }
         requestAnimationFrame(render);
     }
-
-    var orbitButton = document.getElementById("orbit");
-    orbitButton.addEventListener("click", function() {
-        orbit = !orbit;
-    });
 
     render();
 }

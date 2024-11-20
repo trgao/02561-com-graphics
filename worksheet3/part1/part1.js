@@ -52,8 +52,8 @@ window.onload = function init() {
     gl.enableVertexAttribArray(vPosition);
 
     var eye = vec3(0.6 * Math.sin(radians(45)), 0.6 * Math.sin(radians(45)), 0.6 * Math.sin(radians(45)));
-    var at  = vec3(0.0, 0.0, 0.0);
-    var up  = vec3(0.0, 1.0, 0.0);
+    var at = vec3(0.0, 0.0, 0.0);
+    var up = vec3(0.0, 1.0, 0.0);
     var model = mat4();
     var view = lookAt(eye, at, up);
     var projection = mat4();

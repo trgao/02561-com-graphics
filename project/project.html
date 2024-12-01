@@ -5,7 +5,7 @@
         <script type="text/javascript" src="../../angelCommon/MV.js"></script>
         <script type="text/javascript" src="../../angelCommon/webgl-utils.js"></script>
         <script type="text/javascript" src="../../angelCommon/OBJParser.js"></script>
-        <script type="text/javascript" src="part34.js"></script>
+        <script type="text/javascript" src="project.js"></script>
         <script id ="vertex-shader-ground" type="x-shader/x-vertex">
             attribute vec4 a_Position;
             attribute vec2 vTexCoord;
@@ -36,7 +36,7 @@
                 float visibility = (shadowCoord.z > depth + 0.005) ? 0.5 : 1.0;
 
                 vec4 vColor = texture2D(texMap, fTexCoord);
-                gl_FragColor = vec4(vColor.rgb * visibility, vColor.a);
+                gl_FragColor = vec4(vColor.rgb * visibility, vColor.a * 0.7);
             }
         </script>
         <script id ="vertex-shader-teapot" type="x-shader/x-vertex">

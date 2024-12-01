@@ -131,7 +131,7 @@ window.onload = async function init() {
 
         // Render teapot
         if (drawingInfo) {
-            var modelView = translate(0, -0.25 - 0.75 * Math.sin(alpha), -3);
+            var modelView = translate(0.0, -0.25 - 0.75 * Math.sin(alpha), -3.0);
 
             // Render teapot shadow mapping
             gl.useProgram(shadowProgram);

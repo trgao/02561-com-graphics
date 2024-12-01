@@ -28,18 +28,22 @@
         .container {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 5px;
             justify-content: center;
+        }
+        #bigcard {
+            flex-basis: 91.5%;
+            text-align: center;
         }
         .card {
             background: white;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            width: 250px;
             display: flex;
             flex-direction: column;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            flex-basis: 18%;
         }
         .card:hover {
             transform: translateY(-2px);
@@ -164,6 +168,9 @@
                 <li><a href="worksheet10/part3/part3.html">Part 3</a></li>
                 <li><a href="worksheet10/part4/part4.html">Part 4</a></li>
             </ul>
+        </div>
+        <div class="card" id="bigcard">
+            <h3><a href="project/project.html">Project</a></h3>
         </div>
     </div>
 </body>
